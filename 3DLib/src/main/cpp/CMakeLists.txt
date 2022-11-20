@@ -9,6 +9,21 @@ cmake_minimum_required(VERSION 3.18.1)
 
 project("a3dlib")
 
+set(VTK_DIR "~/Documents/github/VTK/buildAndroid/CMakeExternals/Install/vtk-android/lib/cmake/vtk-9.2")
+find_package(VTK REQUIRED)
+include(${VTK_USE_FILE})
+#include_directories(${VTK_INCLUDE_DIRS})
+if (NOT VTK_FOUND)
+    message("Skipping example: ${VTK_NOT_FOUND_MESSAGE}")
+    return ()
+endif ()
+
+message("VTK_LIBRARIES: ${VTK_LIBRARIES}")
+
+set(sources
+        a3dlib.cpp
+        )
+
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
 # You can define multiple libraries, and CMake builds them for you.
@@ -21,7 +36,7 @@ add_library( # Sets the name of the library.
              SHARED
 
              # Provides a relative path to your source file(s).
-             a3dlib.cpp )
+        ${sources} )
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
@@ -45,4 +60,5 @@ target_link_libraries( # Specifies the target library.
 
                        # Links the target library to the log library
                        # included in the NDK.
-                       ${log-lib} )
+                       ${log-lib}
+        ${VTK_LIBRARIES})

@@ -1,5 +1,6 @@
 #include <jni.h>
 #include <string>
+#include "vtk_fmt.h"
 
 extern "C" JNIEXPORT jstring JNICALL
 Java_tech_xx_a3dlib_NativeLib_stringFromJNI(
