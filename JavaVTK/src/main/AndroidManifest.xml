@@ -1,4 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<!-- BEGIN_INCLUDE(manifest) -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.kitware.JavaVTK"
+    android:versionCode="1"
+    android:versionName="1.0">
+
+    <uses-feature android:glEsVersion="0x00020000" />
+
+    <!-- This is the platform API where NativeActivity was introduced. -->
+    <uses-sdk android:minSdkVersion="12" />
+
+    <application>
+        <activity android:name="JavaVTKActivity"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:launchMode="singleTask"
+            android:configChanges="orientation|keyboardHidden">
+            <!-- Tell NativeActivity the name of our .so -->
+            <meta-data android:name="android.app.lib_name"
+                android:value="JavaVTK" />
+        </activity>
+    </application>
 
 </manifest>
+    <!-- END_INCLUDE(manifest) -->
