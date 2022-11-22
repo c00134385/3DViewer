@@ -48,6 +48,7 @@ package com.kitware.JavaVTK;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -76,14 +77,13 @@ import javax.microedition.khronos.opengles.GL10;
  *   that matches it exactly (with regards to red/green/blue/alpha channels
  *   bit depths). Failure to do so would result in an EGL_BAD_MATCH error.
  */
-class JavaVTKView extends GLSurfaceView
+public class JavaVTKView extends GLSurfaceView
 {
     private static String TAG = "JavaVTKView";
     private Renderer myRenderer;
 
-    public JavaVTKView(Context context)
-    {
-        super(context);
+    public JavaVTKView(Context context, AttributeSet attrs) {
+        super(context, attrs);
         setFocusable(true);
         setFocusableInTouchMode(true);
 
@@ -95,6 +95,10 @@ class JavaVTKView extends GLSurfaceView
         this.myRenderer = new Renderer();
         this.setRenderer(myRenderer);
         this.setRenderMode(RENDERMODE_WHEN_DIRTY);
+    }
+
+    public JavaVTKView(Context context) {
+        this(context, null);
     }
 
     private static class ContextFactory implements EGLContextFactory
