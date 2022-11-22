@@ -169,7 +169,17 @@ JNIEXPORT void JNICALL Java_com_kitware_JavaVTK_JavaVTKLib_render(
   JNIEnv* env, jobject obj, jlong udp)
 {
   struct userData* foo = (userData*)(udp);
+//  foo->Renderer->SetBackground(0.4, 0.5, 0.0);
   foo->RenderWindow->SwapBuffersOff(); // android does it
+  foo->Renderer->SetBackground(0.5, 0.5, 0.0);
+    foo->Renderer->SetBackground2(0.5, 0.5, 0.0);
+
+  double r, g, b, alpha;
+  LOGI("%f %f %f", r, g, b);
+  foo->Renderer->GetBackground(r, g, b);
+  alpha = foo->Renderer->GetBackgroundAlpha();
+  foo->Renderer->SetBackgroundAlpha(0.5);
+  LOGI("%f %f %f alpha: %f", r, g, b, alpha);
   foo->RenderWindow->Render();
   foo->RenderWindow->SwapBuffersOn(); // reset
 }

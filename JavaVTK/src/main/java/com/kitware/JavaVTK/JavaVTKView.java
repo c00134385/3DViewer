@@ -47,11 +47,13 @@ package com.kitware.JavaVTK;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
+import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.View;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -232,6 +234,8 @@ public class JavaVTKView extends GLSurfaceView
 
         public void onDrawFrame(GL10 gl)
         {
+//            GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+//            GLES20.glClearColor(0.3f, 0.0f, 0.3f, 1.0f);
             JavaVTKLib.render(vtkContext);
         }
 
@@ -279,6 +283,7 @@ public class JavaVTKView extends GLSurfaceView
         public void onSurfaceChanged(GL10 gl, int width, int height)
         {
             vtkContext = JavaVTKLib.init(width, height);
+            GLES20.glViewport(0, 0, width, height);
         }
 
         public void onSurfaceCreated(GL10 gl, EGLConfig config)
