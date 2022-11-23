@@ -28,8 +28,8 @@
  *
  */
 
-#include <errno.h>
 #include <jni.h>
+#include <errno.h>
 #include <sstream>
 
 #include "vtkNew.h"
@@ -55,171 +55,171 @@
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "NativeVTK", __VA_ARGS__))
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "NativeVTK", __VA_ARGS__))
 
-extern "C"
-{
-  JNIEXPORT jlong JNICALL Java_com_kitware_JavaVTK_JavaVTKLib_init(
-    JNIEnv* env, jobject obj, jint width, jint height);
-  JNIEXPORT void JNICALL Java_com_kitware_JavaVTK_JavaVTKLib_render(
-    JNIEnv* env, jobject obj, jlong renWinP);
-  JNIEXPORT void JNICALL Java_com_kitware_JavaVTK_JavaVTKLib_onKeyEvent(JNIEnv* env, jobject obj,
-    jlong udp, jboolean down, jint keyCode, jint metaState, jint repeatCount);
-  JNIEXPORT void JNICALL Java_com_kitware_JavaVTK_JavaVTKLib_onMotionEvent(JNIEnv* env, jobject obj,
-    jlong udp, jint action, jint eventPointer, jint numPtrs, jfloatArray xPos, jfloatArray yPos,
-    jintArray ids, jint metaState);
+extern "C" {
+JNIEXPORT jlong JNICALL Java_com_kitware_JavaVTK_JavaVTKLib_init(JNIEnv * env, jobject obj,  jint width, jint height);
+JNIEXPORT void JNICALL Java_com_kitware_JavaVTK_JavaVTKLib_render(JNIEnv * env, jobject obj, jlong renWinP);
+JNIEXPORT void JNICALL Java_com_kitware_JavaVTK_JavaVTKLib_onKeyEvent(JNIEnv * env, jobject obj, jlong udp,
+                                                                      jboolean down, jint keyCode, jint metaState, jint repeatCount
+);
+JNIEXPORT void JNICALL Java_com_kitware_JavaVTK_JavaVTKLib_onMotionEvent(JNIEnv * env, jobject obj, jlong udp,
+                                                                         jint action,
+                                                                         jint eventPointer,
+                                                                         jint numPtrs,
+                                                                         jfloatArray xPos, jfloatArray yPos,
+                                                                         jintArray ids, jint metaState);
 };
 
 struct userData
 {
-  vtkRenderWindow* RenderWindow;
-  vtkRenderer* Renderer;
-  vtkAndroidRenderWindowInteractor* Interactor;
+    vtkRenderWindow *RenderWindow;
+    vtkRenderer *Renderer;
+    vtkAndroidRenderWindowInteractor *Interactor;
 };
 
 // Example of updating text as we go
 class vtkExampleCallback : public vtkCommand
 {
 public:
-  static vtkExampleCallback* New() { return new vtkExampleCallback; }
-  virtual void Execute(vtkObject* caller, unsigned long, void*)
-  {
-    // Update cardinality of selection
-    double* pos = this->Camera->GetPosition();
-    std::ostringstream txt;
-    txt << "Camera positioned at: " << std::fixed << std::setprecision(2) << std::setw(6) << pos[0]
-        << ", " << std::setw(6) << pos[1] << ", " << std::setw(6) << pos[2];
-    this->Text->SetInput(txt.str().c_str());
-  }
+    static vtkExampleCallback *New()
+    { return new vtkExampleCallback; }
+    virtual void Execute( vtkObject *caller, unsigned long, void* )
+    {
+        // Update cardinality of selection
+        double *pos = this->Camera->GetPosition();
+        std::ostringstream txt;
+        txt << "Camera positioned at: "
+            << std::fixed
+            << std::setprecision( 2 )
+            << std::setw( 6 )
+            <<  pos[0] << ", "
+            << std::setw( 6 )
+            << pos[1] << ", "
+            << std::setw( 6 )
+            << pos[2];
+        this->Text->SetInput( txt.str().c_str() );
+    }
 
-  vtkExampleCallback()
-  {
-    this->Camera = 0;
-    this->Text = 0;
-  }
+    vtkExampleCallback()
+    {
+        this->Camera = 0;
+        this->Text = 0;
+    }
 
-  vtkCamera* Camera;
-  vtkTextActor* Text;
+    vtkCamera *Camera;
+    vtkTextActor* Text;
 };
 
 /*
  * Here is where you would setup your pipeline and other normal VTK logic
  */
-JNIEXPORT jlong JNICALL Java_com_kitware_JavaVTK_JavaVTKLib_init(
-  JNIEnv* env, jobject obj, jint width, jint height)
+JNIEXPORT jlong JNICALL Java_com_kitware_JavaVTK_JavaVTKLib_init(JNIEnv * env, jobject obj,  jint width, jint height)
 {
-  vtkRenderWindow* renWin = vtkRenderWindow::New();
-  char jniS[4] = { 'j', 'n', 'i', 0 };
-  renWin->SetWindowInfo(jniS); // tell the system that jni owns the window not us
-  renWin->SetSize(width, height);
-  vtkNew<vtkRenderer> renderer;
-  renWin->AddRenderer(renderer.Get());
+    vtkRenderWindow *renWin = vtkRenderWindow::New();
+    char jniS[4] = {'j','n','i',0};
+    renWin->SetWindowInfo(jniS); // tell the system that jni owns the window not us
+    renWin->SetSize(width,height);
+    vtkNew<vtkRenderer> renderer;
+    renWin->AddRenderer(renderer.Get());
 
-  vtkNew<vtkAndroidRenderWindowInteractor> iren;
-  iren->SetRenderWindow(renWin);
+    vtkNew<vtkAndroidRenderWindowInteractor> iren;
+    iren->SetRenderWindow(renWin);
 
-  vtkNew<vtkSphereSource> sphere;
-  sphere->SetThetaResolution(8);
-  sphere->SetPhiResolution(8);
+    vtkNew<vtkSphereSource> sphere;
+    sphere->SetThetaResolution(8);
+    sphere->SetPhiResolution(8);
 
-  vtkNew<vtkPolyDataMapper> sphereMapper;
-  sphereMapper->SetInputConnection(sphere->GetOutputPort());
-  vtkNew<vtkActor> sphereActor;
-  sphereActor->SetMapper(sphereMapper.Get());
+    vtkNew<vtkPolyDataMapper> sphereMapper;
+    sphereMapper->SetInputConnection(sphere->GetOutputPort());
+    vtkNew<vtkActor> sphereActor;
+    sphereActor->SetMapper(sphereMapper.Get());
 
-  vtkNew<vtkConeSource> cone;
-  cone->SetResolution(6);
+    vtkNew<vtkConeSource> cone;
+    cone->SetResolution(6);
 
-  vtkNew<vtkGlyph3D> glyph;
-  glyph->SetInputConnection(sphere->GetOutputPort());
-  glyph->SetSourceConnection(cone->GetOutputPort());
-  glyph->SetVectorModeToUseNormal();
-  glyph->SetScaleModeToScaleByVector();
-  glyph->SetScaleFactor(0.25);
+    vtkNew<vtkGlyph3D> glyph;
+    glyph->SetInputConnection(sphere->GetOutputPort());
+    glyph->SetSourceConnection(cone->GetOutputPort());
+    glyph->SetVectorModeToUseNormal();
+    glyph->SetScaleModeToScaleByVector();
+    glyph->SetScaleFactor(0.25);
 
-  vtkNew<vtkPolyDataMapper> spikeMapper;
-  spikeMapper->SetInputConnection(glyph->GetOutputPort());
+    vtkNew<vtkPolyDataMapper> spikeMapper;
+    spikeMapper->SetInputConnection(glyph->GetOutputPort());
 
-  vtkNew<vtkActor> spikeActor;
-  spikeActor->SetMapper(spikeMapper.Get());
+    vtkNew<vtkActor> spikeActor;
+    spikeActor->SetMapper(spikeMapper.Get());
 
-  renderer->AddActor(sphereActor.Get());
-  renderer->AddActor(spikeActor.Get());
-  renderer->SetBackground(0.4, 0.5, 0.6);
+    renderer->AddActor(sphereActor.Get());
+    renderer->AddActor(spikeActor.Get());
+    renderer->SetBackground(0.4,0.5,0.6);
 
-  vtkNew<vtkTextActor> ta;
-  ta->SetInput("Droids Rock");
-  ta->GetTextProperty()->SetColor(0.5, 1.0, 0.0);
-  ta->SetDisplayPosition(50, 50);
-  ta->GetTextProperty()->SetFontSize(32);
-  renderer->AddActor(ta.Get());
+    vtkNew<vtkTextActor> ta;
+    ta->SetInput("Droids Rock");
+    ta->GetTextProperty()->SetColor( 0.5, 1.0, 0.0 );
+    ta->SetDisplayPosition(50,50);
+    ta->GetTextProperty()->SetFontSize(32);
+    renderer->AddActor(ta.Get());
 
-  vtkNew<vtkExampleCallback> cb;
-  cb->Camera = renderer->GetActiveCamera();
-  cb->Text = ta.Get();
-  iren->AddObserver(vtkCommand::InteractionEvent, cb.Get());
+    vtkNew<vtkExampleCallback> cb;
+    cb->Camera = renderer->GetActiveCamera();
+    cb->Text = ta.Get();
+    iren->AddObserver( vtkCommand::InteractionEvent, cb.Get() );
 
-  struct userData* foo = new struct userData();
-  foo->RenderWindow = renWin;
-  foo->Renderer = renderer.Get();
-  foo->Interactor = iren.Get();
+    struct userData *foo = new struct userData();
+    foo->RenderWindow = renWin;
+    foo->Renderer = renderer.Get();
+    foo->Interactor = iren.Get();
 
-  return (jlong)foo;
+    return (jlong)foo;
 }
 
-JNIEXPORT void JNICALL Java_com_kitware_JavaVTK_JavaVTKLib_render(
-  JNIEnv* env, jobject obj, jlong udp)
+JNIEXPORT void JNICALL Java_com_kitware_JavaVTK_JavaVTKLib_render(JNIEnv * env, jobject obj, jlong udp)
 {
-  struct userData* foo = (userData*)(udp);
-//  foo->Renderer->SetBackground(0.4, 0.5, 0.0);
-  foo->RenderWindow->SwapBuffersOff(); // android does it
-  foo->Renderer->SetBackground(0.5, 0.5, 0.0);
-    foo->Renderer->SetBackground2(0.5, 0.5, 0.0);
-
-  double r, g, b, alpha;
-  LOGI("%f %f %f", r, g, b);
-  foo->Renderer->GetBackground(r, g, b);
-  alpha = foo->Renderer->GetBackgroundAlpha();
-  foo->Renderer->SetBackgroundAlpha(0.5);
-  LOGI("%f %f %f alpha: %f", r, g, b, alpha);
-  foo->RenderWindow->Render();
-  foo->RenderWindow->SwapBuffersOn(); // reset
+    struct userData *foo = (userData *)(udp);
+    foo->RenderWindow->SwapBuffersOff(); // android does it
+    foo->RenderWindow->Render();
+    foo->RenderWindow->SwapBuffersOn(); // reset
 }
 
-JNIEXPORT void JNICALL Java_com_kitware_JavaVTK_JavaVTKLib_onKeyEvent(JNIEnv* env, jobject obj,
-  jlong udp, jboolean down, jint keyCode, jint metaState, jint repeatCount)
+JNIEXPORT void JNICALL Java_com_kitware_JavaVTK_JavaVTKLib_onKeyEvent(JNIEnv * env, jobject obj, jlong udp,
+                                                                      jboolean down, jint keyCode, jint metaState, jint repeatCount)
 {
-  struct userData* foo = (userData*)(udp);
-  foo->Interactor->HandleKeyEvent(down, keyCode, metaState, repeatCount);
+    struct userData *foo = (userData *)(udp);
+    foo->Interactor->HandleKeyEvent(down, keyCode, metaState, repeatCount);
 }
 
-JNIEXPORT void JNICALL Java_com_kitware_JavaVTK_JavaVTKLib_onMotionEvent(JNIEnv* env, jobject obj,
-  jlong udp, jint action, jint eventPointer, jint numPtrs, jfloatArray xPos, jfloatArray yPos,
-  jintArray ids, jint metaState)
+JNIEXPORT void JNICALL Java_com_kitware_JavaVTK_JavaVTKLib_onMotionEvent(JNIEnv * env, jobject obj, jlong udp,
+                                                                         jint action,
+                                                                         jint eventPointer,
+                                                                         jint numPtrs,
+                                                                         jfloatArray xPos, jfloatArray yPos,
+                                                                         jintArray ids, jint metaState)
 {
-  struct userData* foo = (userData*)(udp);
+    struct userData *foo = (userData *)(udp);
 
-  int xPtr[VTKI_MAX_POINTERS];
-  int yPtr[VTKI_MAX_POINTERS];
-  int idPtr[VTKI_MAX_POINTERS];
+    int xPtr[VTKI_MAX_POINTERS];
+    int yPtr[VTKI_MAX_POINTERS];
+    int idPtr[VTKI_MAX_POINTERS];
 
-  // only allow VTKI_MAX_POINTERS touches right now
-  if (numPtrs > VTKI_MAX_POINTERS)
-  {
-    numPtrs = VTKI_MAX_POINTERS;
-  }
+    // only allow VTKI_MAX_POINTERS touches right now
+    if (numPtrs > VTKI_MAX_POINTERS)
+    {
+        numPtrs = VTKI_MAX_POINTERS;
+    }
 
-  // fill in the arrays
-  jfloat* xJPtr = env->GetFloatArrayElements(xPos, 0);
-  jfloat* yJPtr = env->GetFloatArrayElements(yPos, 0);
-  jint* idJPtr = env->GetIntArrayElements(ids, 0);
-  for (int i = 0; i < numPtrs; ++i)
-  {
-    xPtr[i] = (int)xJPtr[i];
-    yPtr[i] = (int)yJPtr[i];
-    idPtr[i] = idJPtr[i];
-  }
-  env->ReleaseIntArrayElements(ids, idJPtr, 0);
-  env->ReleaseFloatArrayElements(xPos, xJPtr, 0);
-  env->ReleaseFloatArrayElements(yPos, yJPtr, 0);
+    // fill in the arrays
+    jfloat *xJPtr = env->GetFloatArrayElements(xPos, 0);
+    jfloat *yJPtr = env->GetFloatArrayElements(yPos, 0);
+    jint *idJPtr = env->GetIntArrayElements(ids, 0);
+    for (int i = 0; i < numPtrs; ++i)
+    {
+        xPtr[i] = (int)xJPtr[i];
+        yPtr[i] = (int)yJPtr[i];
+        idPtr[i] = idJPtr[i];
+    }
+    env->ReleaseIntArrayElements(ids, idJPtr, 0);
+    env->ReleaseFloatArrayElements(xPos, xJPtr, 0);
+    env->ReleaseFloatArrayElements(yPos, yJPtr, 0);
 
-  foo->Interactor->HandleMotionEvent(action, eventPointer, numPtrs, xPtr, yPtr, idPtr, metaState);
+    foo->Interactor->HandleMotionEvent(action, eventPointer, numPtrs, xPtr, yPtr, idPtr, metaState);
 }

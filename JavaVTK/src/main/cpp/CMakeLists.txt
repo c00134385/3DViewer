@@ -8,15 +8,14 @@ cmake_minimum_required(VERSION 3.18.1)
 # Declares and names the project.
 
 project("JavaVTK")
-
-set(VTK_DIR "~/Documents/github/VTK/buildAndroid/CMakeExternals/Install/vtk-android/lib/cmake/vtk-9.2")
+set(VTK_DIR "~/Documents/github/vtkBuild/${CMAKE_ANDROID_ARCH_ABI}/lib/cmake/vtk-8.2")
 find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})
 #include_directories(${VTK_INCLUDE_DIRS})
-if (NOT VTK_FOUND)
-    message("Skipping example: ${VTK_NOT_FOUND_MESSAGE}")
-    return ()
-endif ()
+#if (NOT VTK_FOUND)
+#    message("Skipping example: ${VTK_NOT_FOUND_MESSAGE}")
+#    return ()
+#endif ()
 
 message("VTK_LIBRARIES: ${VTK_LIBRARIES}")
 
@@ -60,5 +59,6 @@ target_link_libraries( # Specifies the target library.
 
         # Links the target library to the log library
         # included in the NDK.
+        EGL GLESv3 stdc++
         ${log-lib}
         ${VTK_LIBRARIES})
